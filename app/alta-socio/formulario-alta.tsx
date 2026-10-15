@@ -259,7 +259,11 @@ export function FormularioAlta({ email }: { email: string }) {
           <label className="mt-10 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-tinta">
             <input type="checkbox" name="privacidad" required className="mt-1 size-4 shrink-0 accent-burdeos" />
             <span>
-              He leído y acepto que mis datos sean tratados por la Asociación Cultural Daffari con la única finalidad de gestionar mi alta como socio. <span className="text-burdeos">*</span>
+              He leído la{" "}
+              <a href="/privacidad" target="_blank" className="text-burdeos underline underline-offset-4 hover:text-oro">
+                política de privacidad
+              </a>{" "}
+              y acepto que mis datos sean tratados por la Asociación Cultural Daffari con la única finalidad de gestionar mi alta como socio. <span className="text-burdeos">*</span>
             </span>
           </label>
         </fieldset>

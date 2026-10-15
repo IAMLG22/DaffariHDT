@@ -12,11 +12,24 @@ export const site = {
   fundacion: 2014,
   origen: 2009,
   redes: {
-    // PENDIENTE: cuenta oficial de Instagram de la asociación
-    instagram: "https://www.instagram.com/",
+    instagram: "https://www.instagram.com/daffarihdt/",
     twitter: "https://twitter.com/DaffariHdT",
     facebook: "https://www.facebook.com/pages/Daffari-hombres-de-trono/107413182670680",
   },
+}
+
+/**
+ * Datos del titular para los textos legales.
+ * PENDIENTE: completar con los datos del Registro de Asociaciones de Andalucía.
+ */
+export const legal = {
+  titular: "Asociación Cultural Daffari — Hombres de Trono",
+  nif: "", // PENDIENTE
+  domicilio: "", // PENDIENTE (domicilio social)
+  registro: "", // PENDIENTE (n.º de inscripción en el Registro de Asociaciones de Andalucía)
+  email: "info@daffari.es",
+  dominio: "daffari.es",
+  actualizado: "2026-10-15",
 }
 
 export const nav = [

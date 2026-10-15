@@ -37,3 +37,18 @@ export function entradaArchivo(slug: string) {
     anterior: i >= 0 && i < entradas.length - 1 ? entradas[i + 1] : undefined,
   }
 }
+
+/** Sustituye los iframes de YouTube por el marcador de «Reproducir». */
+export function prepararVideos(html: string) {
+  return html.replace(/<iframe[^>]*src="(?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([\w-]+)[^"]*"[^>]*><\/iframe>/g, (_, id) =>
+    [
+      `<div class="video-externo" data-video="${id}">`,
+      `<button type="button">`,
+      `<span class="video-externo__icono" aria-hidden="true">▶</span>`,
+      `<span class="video-externo__texto">Reproducir en YouTube</span>`,
+      `<span class="video-externo__nota">Al reproducirlo se conectará con YouTube (Google). Consulta la política de cookies.</span>`,
+      `</button>`,
+      `</div>`,
+    ].join(""),
+  )
+}

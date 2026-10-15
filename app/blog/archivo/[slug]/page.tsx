@@ -2,7 +2,9 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { archivo, entradaArchivo } from "@/lib/archivo"
+import { archivo, entradaArchivo, prepararVideos } from "@/lib/archivo"
+import { AvisoArchivo } from "@/components/site/aviso-archivo"
+import { ArchivoCuerpo } from "@/components/site/archivo-cuerpo"
 import { formatearFecha } from "@/lib/content"
 
 export function generateStaticParams() {
@@ -21,7 +23,7 @@ export default async function EntradaArchivoPage({ params }: PageProps<"/blog/ar
   if (!e) notFound()
 
   // Imágenes diferidas: el cuerpo viene tal cual del blog antiguo (ya saneado).
-  const html = e.html.replace(/<img /g, '<img loading="lazy" decoding="async" ')
+  const html = prepararVideos(e.html).replace(/<img /g, '<img loading="lazy" decoding="async" ')
 
   return (
     <article className="relative bg-[#efe8da]">
@@ -47,9 +49,11 @@ export default async function EntradaArchivoPage({ params }: PageProps<"/blog/ar
       </header>
 
       <div className="relative mx-auto max-w-3xl px-4 py-14 sm:px-8 sm:py-20">
-        <div className="archivo-html" dangerouslySetInnerHTML={{ __html: html }} />
+        <ArchivoCuerpo html={html} />
 
-        <p className="mt-14 border-t border-dashed border-incienso/30 pt-6 text-xs text-tinta/70">
+        <AvisoArchivo className="mt-14" />
+
+        <p className="mt-8 border-t border-dashed border-incienso/30 pt-6 text-xs text-tinta/70">
           Publicación original:{" "}
           <a href={e.urlOriginal} target="_blank" rel="noreferrer" className="break-all underline underline-offset-4 hover:text-burdeos">
             {e.urlOriginal}

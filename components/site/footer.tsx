@@ -89,7 +89,14 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col items-center justify-between gap-4 pt-8 text-xs tracking-wide sm:flex-row">
-          <p>© Asociación Cultural Daffari · Hombres de Trono</p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+            <p>© Asociación Cultural Daffari · Hombres de Trono</p>
+            <nav aria-label="Información legal" className="flex gap-4">
+              <Link href="/aviso-legal" className="transition-colors hover:text-oro">Aviso legal</Link>
+              <Link href="/privacidad" className="transition-colors hover:text-oro">Privacidad</Link>
+              <Link href="/cookies" className="transition-colors hover:text-oro">Cookies</Link>
+            </nav>
+          </div>
           <p className="font-display tracking-[0.3em] text-oro/80 uppercase">Málaga · Desde {site.fundacion}</p>
         </div>
       </div>

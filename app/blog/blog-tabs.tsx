@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { formatearFecha, type Entrada } from "@/lib/content"
 import type { ArchivoResumen } from "@/lib/archivo"
 import { cn } from "@/lib/utils"
+import { AvisoArchivo } from "@/components/site/aviso-archivo"
 
 type Etapa = "actual" | "archivo"
 
@@ -198,6 +199,8 @@ function ArchivoHistorico({ entradas }: { entradas: ArchivoResumen[] }) {
             original de publicación.
           </p>
         </header>
+
+        <AvisoArchivo className="mt-6" />
 
         {/* Buscador y filtro por año */}
         <div ref={filtrosRef} className="mt-8 flex scroll-mt-36 flex-col gap-5 sm:mt-10 lg:flex-row lg:items-center lg:justify-between">
