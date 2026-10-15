@@ -4,6 +4,7 @@ import { Fragment } from "react"
 import { daffari } from "@/lib/content"
 import { PageHeader } from "@/components/site/headings"
 import { Reveal } from "@/components/site/ui"
+import { FotoAdaptable } from "@/components/site/foto-adaptable"
 
 export const metadata: Metadata = {
   title: "Antonio Daffari",
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
 
 function Cita({ children, grande = false }: { children: React.ReactNode; grande?: boolean }) {
   return (
-    <Reveal as="figure" className="my-14 border-y border-oro/40 py-10 text-center">
-      <span aria-hidden="true" className="block font-display text-6xl leading-none text-oro">“</span>
+    <Reveal as="figure" className="my-10 border-y border-oro/40 py-8 text-center sm:my-14 sm:py-10">
+      <span aria-hidden="true" className="block font-display text-5xl leading-none text-oro sm:text-6xl">“</span>
       <blockquote
         className={
           "mx-auto max-w-2xl font-serif leading-[1.2] text-burdeos italic text-balance " +
-          (grande ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl")
+          (grande ? "text-[2rem] sm:text-5xl" : "text-[1.65rem] sm:text-4xl")
         }
       >
         {children}
@@ -34,39 +35,40 @@ export default function AntonioDaffari() {
         title="Antonio Daffari"
         intro="Capataz de tronos. El malagueño que enseñó a Málaga a andar sus tronos."
         image="/images/historia/daffari-mando.jpg"
+        imageMobile="/images/fotos/daffari-mando-vertical.jpg"
+        imageClassName="object-[center_30%] sm:object-center"
       />
 
       <article className="bg-pergamino">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:gap-12 sm:px-8 sm:py-20 lg:grid-cols-12 lg:gap-16 lg:py-28">
           {/* Columna fija con la fotografía y la ficha */}
           <aside className="lg:col-span-5">
             <div className="lg:sticky lg:top-28">
               <figure className="group relative">
-                <div className="relative aspect-[3/4] overflow-hidden bg-incienso lg:aspect-auto lg:h-[52svh]">
-                  <Image
-                    src="/images/historia/procesion-calle.jpg"
-                    alt="Procesión por el centro de Málaga, mediados del siglo XX"
-                    fill
-                    priority
+                <div className="relative aspect-[4/5] overflow-hidden bg-incienso sm:aspect-[4/3] lg:aspect-auto lg:h-[52svh]">
+                  <FotoAdaptable
+                    movil={{ src: "/images/fotos/domingo-ramos-vertical.jpg" }}
+                    escritorio={{ src: "/images/fotos/domingo-ramos.jpg" }}
+                    alt="El trono de la Pollinica entre palmas y público el Domingo de Ramos"
                     sizes="(min-width: 1024px) 40vw, 100vw"
-                    className="foto-antigua object-cover"
+                    className="foto-antigua object-cover object-[center_30%] lg:object-[center_40%]"
                   />
                   <div className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay grano" aria-hidden="true" />
                 </div>
-                <div className="pointer-events-none absolute inset-4 border border-oro/50" aria-hidden="true" />
+                <div className="pointer-events-none absolute inset-3 border border-oro/40 sm:inset-4 sm:border-oro/50" aria-hidden="true" />
                 <figcaption className="mt-3 text-xs tracking-wide text-muted-foreground">
-                  Archivo de la Asociación Daffari.
+                  La Pollinica, cofradía que Daffari ayudó a reorganizar. Archivo de la Asociación.
                 </figcaption>
               </figure>
 
               <dl className="mt-8 grid grid-cols-2 border-y border-border">
                 <div className="flex flex-col-reverse border-r border-border py-5 pr-4">
                   <dt className="mt-1 text-xs tracking-[0.2em] text-muted-foreground uppercase">Nace</dt>
-                  <dd className="font-display text-3xl text-burdeos">{daffari.vida.nace}</dd>
+                  <dd className="font-display text-[1.7rem] text-burdeos sm:text-3xl">{daffari.vida.nace}</dd>
                 </div>
                 <div className="flex flex-col-reverse py-5 pl-5">
                   <dt className="mt-1 text-xs tracking-[0.2em] text-muted-foreground uppercase">Muere en Málaga</dt>
-                  <dd className="font-display text-3xl text-burdeos">1960</dd>
+                  <dd className="font-display text-[1.7rem] text-burdeos sm:text-3xl">1960</dd>
                 </div>
               </dl>
 
@@ -98,7 +100,7 @@ export default function AntonioDaffari() {
                       key={pi}
                       className={
                         pi === 0
-                          ? "capitular " + (si === 0 ? "text-[1.4rem] leading-[1.65] text-incienso" : "")
+                          ? "capitular " + (si === 0 ? "text-[1.3rem] leading-[1.6] text-incienso sm:text-[1.4rem] sm:leading-[1.65]" : "")
                           : p.startsWith("Les hablo")
                             ? "font-display text-xl tracking-wide text-burdeos"
                             : undefined
@@ -132,7 +134,7 @@ export default function AntonioDaffari() {
 
             <div className="mt-16 flex items-center gap-4 text-oro" aria-hidden="true">
               <span className="h-px flex-1 bg-current opacity-50" />
-              <span className="font-display text-sm tracking-[0.4em]">R.I.P. · 19 · II · 1960</span>
+              <span className="font-display text-[0.7rem] tracking-[0.3em] whitespace-nowrap sm:text-sm sm:tracking-[0.4em]">R.I.P. · 19 · II · 1960</span>
               <span className="h-px flex-1 bg-current opacity-50" />
             </div>
           </div>

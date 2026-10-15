@@ -168,7 +168,8 @@ vec2 coverUV(vec2 uv, float imgAspect) {
   vec2 scale = (canvasAspect > imgAspect)
     ? vec2(1.0, imgAspect / canvasAspect)
     : vec2(canvasAspect / imgAspect, 1.0);
-  return mirror((uv - 0.5) * scale + 0.5);
+  float centerY = (canvasAspect > imgAspect) ? 0.58 : 0.5;
+  return mirror((uv - vec2(0.5, centerY)) * scale + vec2(0.5, centerY));
 }
 
 void main() {
@@ -527,16 +528,26 @@ export default function MorphGallery({
   }, [])
 
   // ---- pointer and keyboard ------------------------------------------------
-  const swipe = React.useRef<number | null>(null)
+  // Daffari: el contenedor declara `touch-action: pan-y`, así el navegador
+  // sigue haciendo scroll vertical pero deja el gesto horizontal al carrusel
+  // (sin eso, en móvil el pointerup nunca llega: se convierte en pointercancel).
+  const swipe = React.useRef<{ x: number; y: number } | null>(null)
   const onPointerDown = (e: React.PointerEvent) => {
-    swipe.current = e.clientX
+    if (!e.isPrimary) return
+    swipe.current = { x: e.clientX, y: e.clientY }
   }
   const onPointerUp = (e: React.PointerEvent) => {
-    const startX = swipe.current
+    const start = swipe.current
     swipe.current = null
-    if (startX === null) return
-    const dx = e.clientX - startX
-    if (Math.abs(dx) > 48) go(active + (dx < 0 ? 1 : -1))
+    if (!start) return
+    const dx = e.clientX - start.x
+    const dy = e.clientY - start.y
+    // Sólo cuenta si es claramente horizontal: un scroll torcido no pasa foto.
+    const umbral = e.pointerType === "touch" ? 36 : 48
+    if (Math.abs(dx) > umbral && Math.abs(dx) > Math.abs(dy) * 1.2) go(active + (dx < 0 ? 1 : -1))
+  }
+  const onPointerCancel = () => {
+    swipe.current = null
   }
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") {
@@ -552,16 +563,21 @@ export default function MorphGallery({
   const atEnd = !loop && active === items.length - 1
   const current = items[active]
 
+  // Daffari: en móvil las flechas bajan a una barra de control junto al pulgar
+  // (altura ajustable con --mg-controls-bottom), discretas y en oro sobre
+  // cristal incienso; en escritorio quedan centradas a los lados.
   const arrowClass =
-    "absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center " +
-    "rounded-full border border-white/25 bg-white/15 text-white backdrop-blur-md " +
-    "transition-colors duration-300 hover:bg-white/30 " +
+    "absolute z-10 flex items-center justify-center rounded-full backdrop-blur-md " +
+    "transition-[background-color,transform,border-color] duration-300 active:scale-95 " +
+    "max-sm:bottom-[var(--mg-controls-bottom,1.5rem)] max-sm:size-10 max-sm:border max-sm:border-oro/35 " +
+    "max-sm:bg-incienso/40 max-sm:text-oro-claro max-sm:active:bg-oro/25 " +
+    "sm:top-1/2 sm:size-11 sm:-translate-y-1/2 sm:border sm:border-white/25 sm:bg-white/15 sm:text-white sm:hover:bg-white/30 " +
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oro " +
-    "disabled:pointer-events-none disabled:opacity-25 max-sm:hidden"
+    "disabled:pointer-events-none disabled:opacity-25 [-webkit-tap-highlight-color:transparent]"
 
   return (
     <section
-      className={"relative w-full overflow-hidden bg-incienso " + className}
+      className={"relative w-full touch-pan-y overflow-hidden bg-incienso select-none " + className}
       style={{ height }}
       role="region"
       aria-roledescription="carrusel"
@@ -570,6 +586,7 @@ export default function MorphGallery({
       onKeyDown={onKeyDown}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -589,17 +606,27 @@ export default function MorphGallery({
           />
         ))
       ) : (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 block h-full w-full"
-          style={{
-            // Nothing is on the canvas until the textures land; fading it in
-            // avoids a black flash on a slow connection.
-            opacity: ready ? 1 : 0,
-            transition: "opacity 400ms ease",
-          }}
-          aria-hidden="true"
-        />
+        <>
+          {/* Imagen de base para que nunca se muestre un rectángulo negro mientras carga el lienzo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={current ? current.src : items[0]?.src}
+            alt={current?.alt ?? ""}
+            className="absolute inset-0 block h-full w-full object-cover"
+            style={{ maxWidth: "none" }}
+            draggable={false}
+            aria-hidden="true"
+          />
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 block h-full w-full"
+            style={{
+              opacity: ready ? 1 : 0,
+              transition: "opacity 400ms ease",
+            }}
+            aria-hidden="true"
+          />
+        </>
       )}
 
       <div
@@ -611,7 +638,7 @@ export default function MorphGallery({
         <>
           <button
             type="button"
-            className={arrowClass + " left-4 sm:left-[30px]"}
+            className={arrowClass + " left-5 sm:left-[30px]"}
             onClick={() => go(active - 1)}
             disabled={atStart}
             aria-label="Fotografía anterior"
@@ -622,7 +649,7 @@ export default function MorphGallery({
           </button>
           <button
             type="button"
-            className={arrowClass + " right-4 sm:right-[30px]"}
+            className={arrowClass + " right-5 sm:right-[30px]"}
             onClick={() => go(active + 1)}
             disabled={atEnd}
             aria-label="Fotografía siguiente"
@@ -632,6 +659,32 @@ export default function MorphGallery({
             </svg>
           </button>
         </>
+      )}
+
+      {/* Daffari: en móvil, sin miniaturas, unos puntos dicen cuántas fotos hay y cuál se ve */}
+      {arrows && items.length > 1 && (
+        <ol
+          className="absolute inset-x-16 bottom-[var(--mg-controls-bottom,1.5rem)] z-10 flex h-10 list-none items-center justify-center gap-0.5 p-0 sm:hidden"
+          aria-hidden="true"
+        >
+          {items.map((item, i) => (
+            <li key={item.src} className="flex">
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => go(i)}
+                className="flex h-8 items-center px-1.5 [-webkit-tap-highlight-color:transparent]"
+              >
+                <span
+                  className={
+                    "block h-[3px] rounded-full transition-all duration-500 " +
+                    (i === active ? "w-5 bg-oro" : "w-1.5 bg-pergamino/45")
+                  }
+                />
+              </button>
+            </li>
+          ))}
+        </ol>
       )}
 
       {thumbnails && items.length > 1 && (

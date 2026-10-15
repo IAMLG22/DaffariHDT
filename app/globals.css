@@ -20,8 +20,8 @@
 
   --font-display: var(--font-cinzel);
   --font-serif: var(--font-cormorant);
-  --font-heading: var(--font-cormorant);
-  --font-sans: var(--font-jakarta);
+  --font-heading: var(--font-cinzel);
+  --font-sans: var(--font-lora);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -101,10 +101,18 @@
   }
 }
 
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   /* Rótulo pequeño en versalitas, dorado */
   .eyebrow {
-    @apply font-sans text-[0.7rem] font-semibold tracking-[0.32em] uppercase text-oro;
+    @apply font-display text-[0.66rem] font-semibold tracking-[0.32em] uppercase text-oro sm:text-[0.72rem] sm:tracking-[0.3em];
   }
   /* Filete dorado con rombo central, al modo de las orlas de los carteles */
   .filete {
@@ -117,7 +125,7 @@
   }
   /* Letra capitular */
   .capitular::first-letter {
-    @apply float-left mt-1 mr-3 font-display text-[4.6rem] leading-[0.8] text-burdeos;
+    @apply float-left mt-1 mr-2.5 font-display text-[3.7rem] leading-[0.8] text-burdeos sm:mr-3 sm:text-[4.6rem];
   }
   /* Grano fotográfico para las fotos antiguas */
   .grano {
@@ -132,26 +140,21 @@
   .foto-antigua:hover {
     filter: sepia(0.15) grayscale(0) contrast(1.08) brightness(1);
   }
-  /* Revelado al hacer scroll */
+  /* Revelado seguro: 100% visible en todo momento para evitar pantallas en blanco */
   .reveal {
-    @apply translate-y-6 opacity-0 transition-[opacity,transform] duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)];
-  }
-  .reveal[data-visible="true"] {
-    @apply translate-y-0 opacity-100;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .reveal { @apply translate-y-0 opacity-100 transition-none; }
+    opacity: 1 !important;
+    transform: none !important;
   }
   /* Tipografía de lectura larga */
   .prosa {
-    @apply font-serif text-[1.22rem] leading-[1.75] text-tinta;
+    @apply font-serif text-[1.16rem] leading-[1.75] text-tinta sm:text-[1.22rem];
   }
   .prosa p + p {
     @apply mt-5;
   }
   /* Cuerpo HTML migrado del blog antiguo */
   .archivo-html {
-    @apply font-serif text-[1.18rem] leading-[1.75] text-tinta break-words;
+    @apply font-serif text-[1.12rem] leading-[1.75] text-tinta break-words [overflow-wrap:anywhere] sm:text-[1.18rem];
   }
   .archivo-html p,
   .archivo-html ul,
@@ -192,6 +195,6 @@
     @apply border border-incienso/15 p-2 align-top text-base;
   }
   .prosa h3 {
-    @apply mt-14 mb-5 font-display text-xl tracking-[0.12em] text-burdeos uppercase;
+    @apply mt-12 mb-4 font-display text-[1.05rem] leading-snug tracking-[0.1em] text-burdeos uppercase sm:mt-14 sm:mb-5 sm:text-xl sm:tracking-[0.12em];
   }
 }

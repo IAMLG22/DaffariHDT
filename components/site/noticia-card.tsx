@@ -27,12 +27,12 @@ export function NoticiaCard({ noticia: n, destacada = false }: { noticia: Notici
           </span>
         </div>
       )}
-      <div className={cn("flex flex-1 flex-col p-7", destacada && "md:col-span-5 md:justify-center md:p-12")}>
+      <div className={cn("flex flex-1 flex-col p-6 sm:p-7", destacada && "md:col-span-5 md:justify-center md:p-12")}>
         {destacada && <p className="eyebrow mb-6">Última noticia</p>}
-        <time dateTime={n.fecha} className="text-xs tracking-[0.18em] text-muted-foreground uppercase">
+        <time dateTime={n.fecha} className="text-[0.68rem] tracking-[0.18em] text-muted-foreground uppercase sm:text-xs">
           {fecha}
         </time>
-        <h3 className={cn("mt-3 font-serif leading-[1.1] text-incienso text-balance", destacada ? "text-4xl lg:text-5xl" : "text-2xl")}>
+        <h3 className={cn("mt-3 font-serif leading-[1.1] text-incienso text-balance", destacada ? "text-[2rem] sm:text-4xl lg:text-5xl" : "text-[1.55rem] sm:text-2xl")}>
           <Link href={`/noticias/${n.slug}`} className="after:absolute after:inset-0">
             {n.titular}
           </Link>

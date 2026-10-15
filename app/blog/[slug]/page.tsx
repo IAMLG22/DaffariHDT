@@ -26,14 +26,14 @@ export default async function EntradaPage({ params }: PageProps<"/blog/[slug]">)
     <article className="bg-pergamino">
       <header className="relative isolate overflow-hidden bg-incienso pt-36 pb-20 text-pergamino sm:pt-44">
         {e.imagen && (
-          <Image src={e.imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-25" />
+          <Image src={e.imagen} alt="" fill preload sizes="100vw" className="-z-10 object-cover opacity-25" />
         )}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-incienso to-incienso/40" aria-hidden="true" />
         <div className="mx-auto max-w-3xl px-4 sm:px-8">
           <Link href="/blog" className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-oro uppercase hover:text-oro-claro">
-            <ArrowLeft className="size-4" /> Blog Actual
+            <ArrowLeft className="size-4" /> Blog
           </Link>
-          <p className="eyebrow mt-10">{e.seccion} · {e.lectura ? `${e.lectura} min de lectura` : "Blog Actual"}</p>
+          <p className="eyebrow mt-10">{e.seccion} · {e.lectura ? `${e.lectura} min de lectura` : "Blog"}</p>
           <h1 className="mt-5 font-serif text-4xl leading-[1.05] text-balance sm:text-6xl">{e.titulo}</h1>
           <p className="mt-8 text-xs tracking-[0.18em] text-pergamino/70 uppercase">
             {e.autor} · <time dateTime={e.fecha}>{formatearFecha(e.fecha)}</time>

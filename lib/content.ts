@@ -27,7 +27,7 @@ export const nav = [
     href: "/blog",
     label: "Blog",
     children: [
-      { href: "/blog", label: "Blog Actual", hint: "Nueva etapa: opinión y crónica" },
+      { href: "/blog", label: "Blog", hint: "Nueva etapa: opinión y crónica" },
       { href: "/blog?etapa=archivo", label: "Archivo Histórico", hint: "Hemeroteca del blog antiguo" },
     ],
   },
@@ -35,12 +35,23 @@ export const nav = [
 ] as const
 
 // ---------------------------------------------------------------- Hero
+/** Escritorio: fotografías horizontales y panorámicas. */
 export const heroFotos = [
   { src: "/images/historia/pollinica-1920.jpg", thumb: "/images/historia/pollinica-1920-thumb.jpg", alt: "Trono de la Pollinica a su paso por el centro de Málaga, primeras décadas del siglo XX" },
-  { src: "/images/historia/hombres-de-trono.jpg", thumb: "/images/historia/hombres-de-trono-thumb.jpg", alt: "Hombres de trono y nazarenos ante un trono procesional" },
+  { src: "/images/fotos/cuadrilla-varal.jpg", thumb: "/images/fotos/cuadrilla-varal-thumb.jpg", alt: "Cuadrilla de hombres de trono bajo el varal" },
+  { src: "/images/fotos/tronos-noche.jpg", thumb: "/images/fotos/tronos-noche-thumb.jpg", alt: "Dos tronos en la noche, entre hombres de trono y nazarenos" },
+  { src: "/images/fotos/virgen-calle.jpg", thumb: "/images/fotos/virgen-calle-thumb.jpg", alt: "Trono de una Dolorosa con su cuadrilla de hombres de trono" },
   { src: "/images/historia/daffari-mando.jpg", thumb: "/images/historia/daffari-mando-thumb.jpg", alt: "Un capataz manda la cuadrilla entre palmas el Domingo de Ramos" },
-  { src: "/images/historia/cuadrilla.jpg", thumb: "/images/historia/cuadrilla-thumb.jpg", alt: "Cuadrilla de hombres de trono con su capataz junto a la campana" },
-  { src: "/images/historia/capataces.jpg", thumb: "/images/historia/capataces-thumb.jpg", alt: "Capataces y hombres de trono con el martillo junto al trono" },
+  { src: "/images/fotos/trono-tunicas-blancas.jpg", thumb: "/images/fotos/trono-tunicas-blancas-thumb.jpg", alt: "Hombres de trono de túnica blanca por una calle de Málaga" },
+]
+
+/** Móvil: fotografías verticales que llenan la pantalla del teléfono sin recortes raros. */
+export const heroFotosMovil = [
+  { src: "/images/fotos/palio-nazareno-noche.jpg", alt: "Trono de palio de noche, con hombres de trono y un nazareno ante los varales" },
+  { src: "/images/historia/hombres-de-trono-retrato.jpg", alt: "Hombres de trono con túnica blanca acompañando a su trono" },
+  { src: "/images/fotos/crucificado-noche.jpg", alt: "Trono de un Crucificado por una calle de Málaga" },
+  { src: "/images/fotos/palio-cuadrilla.jpg", alt: "Hombres de trono ante un trono de palio. Fotografía antigua" },
+  { src: "/images/fotos/palio-arco.jpg", alt: "Trono de palio a la salida de su templo" },
 ]
 
 // ---------------------------------------------------------------- Asociación
@@ -48,13 +59,13 @@ export const asociacion = {
   intro:
     "Se dice que Málaga tiene rota la línea del tiempo en muchos aspectos culturales. En el caso de la Semana Santa y especialmente de los capataces también sucede así. En Málaga, con la crisis de décadas pasadas para rellenar tronos y la transición hacia la figura de los hermanos hombres de trono, la imagen del capataz ha pasado de ser vital a, en muchos casos, estar denostada y servir como premio a los hermanos por su trabajo o implicación en una Cofradía.",
   parrafos: [
-    "Por esta razón y por el hecho en sí de recuperar la figura de alguien al que tanto le deben los hombres de trono de nuestra ciudad, un grupo de cofrades nos unimos para formar una asociación cultural con ganas de trabajar dentro y fuera del varal y recuperar su sello. Así nace la “Asociación Cultural Daffari Hombres de Trono”. Nuestra asociación ha conseguido por sus propios medios dar a conocer y recuperar la filosofía y figura de Don Antonio a la hora de llevar un trono.",
-    "Al fin y al cabo, nuestra historia no quiere más que ser la continuación de la de Don Antonio: la de un malagueño más. Un caballero que, de no ser por un grupo de personas, quedaría en la memoria de muy pocos y que, con el paso de los años, acabaría siendo dueño del olvido colectivo en el que estamos sumidos en nuestra ciudad.",
+    "Por esta razón y por el hecho en sí de recuperar la figura de alguien al que tanto le deben los hombres de trono de nuestra ciudad, un grupo de cofrades nos unimos para formar una asociación cultural con ganas de trabajar dentro y fuera del varal y recuperar su sello. Así nace la “Asociación Cultural Daffari Hombres de Trono”. Nuestra asociación ha conseguido por sus propios medios dar a conocer y recuperar la filosofía y figura de Antonio Daffari a la hora de llevar un trono.",
+    "Al fin y al cabo, nuestra historia no quiere más que ser la continuación de la de Antonio Daffari: la de un malagueño más. Un caballero que, de no ser por un grupo de personas, quedaría en la memoria de muy pocos y que, con el paso de los años, acabaría siendo dueño del olvido colectivo en el que estamos sumidos en nuestra ciudad.",
   ],
   cita: "Es importante saber de dónde venimos y quiénes nos han llevado hasta aquí para poder defender con criterio e incluso para poder querer de verdad a tu tierra.",
   valores: [
     { titulo: "Historia", numeral: "I", texto: "Recuperar la memoria de los capataces y hombres de trono que dieron forma a la Semana Santa de Málaga." },
-    { titulo: "Tradición", numeral: "II", texto: "Custodiar el paso malagueño y la manera de llevar un trono con formalidad y honradez, como enseñó Don Antonio." },
+    { titulo: "Tradición", numeral: "II", texto: "Custodiar el paso malagueño y la manera de llevar un trono con formalidad y honradez, como enseñó Antonio Daffari." },
     { titulo: "Hermandad", numeral: "III", texto: "Ser punto de encuentro de hombres de trono, capataces y mayordomos de Málaga y su provincia." },
     { titulo: "Cultura", numeral: "IV", texto: "Charlas, coloquios, tertulias y el Vía Crucis de hombres de trono para formar y divulgar." },
   ],
@@ -85,6 +96,51 @@ export const junta = {
     "José María Alarcón Pascual",
   ],
 }
+
+// ---------------------------------------------------------------- Instagram
+// `encuadre`: object-position para que el recorte 4:5 (móvil) o cuadrado
+// (escritorio) no corte caras ni tronos.
+export const instagramPosts: { id: string; imagen: string; pie: string; fecha: string; encuadre?: string }[] = [
+  {
+    id: "post-1",
+    imagen: "/images/fotos/cuadrilla-1970.jpg",
+    pie: "Rostros de una cuadrilla de hombres de trono: la memoria en color de nuestro archivo.",
+    fecha: "Archivo Daffari",
+  },
+  {
+    id: "post-2",
+    imagen: "/images/fotos/daffari-mando-vertical.jpg",
+    pie: "Antonio Daffari mandando la cuadrilla entre palmas el Domingo de Ramos.",
+    fecha: "Memoria del Varal",
+    encuadre: "object-[center_30%]",
+  },
+  {
+    id: "post-3",
+    imagen: "/images/historia/capataces-malagueta.jpg",
+    pie: "Maestros del toque y del mando en la Semana Mayor malagueña.",
+    fecha: "Capataces Ilustres",
+    encuadre: "object-[center_15%]",
+  },
+  {
+    id: "post-4",
+    imagen: "/images/fotos/cristo-noche.jpg",
+    pie: "Un trono de Cristo en la noche malagueña, entre la luz de sus candelabros.",
+    fecha: "Hemeroteca Histórica",
+  },
+  {
+    id: "post-5",
+    imagen: "/images/fotos/virgen-calle.jpg",
+    pie: "Una Dolorosa avanza por la calle sobre los hombros de su cuadrilla.",
+    encuadre: "object-[center_40%]",
+    fecha: "Archivo de la Asociación",
+  },
+  {
+    id: "post-6",
+    imagen: "/images/fotos/trono-capilla.jpg",
+    pie: "Un trono ante las puertas de su capilla, rodeado de cofrades y público.",
+    fecha: "Legado Cofrade",
+  },
+]
 
 // ---------------------------------------------------------------- Noticias
 export type Noticia = {

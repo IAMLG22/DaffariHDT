@@ -24,14 +24,13 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-incienso text-pergamino/75">
       <div className="pointer-events-none absolute inset-0 opacity-[0.07] grano" aria-hidden="true" />
-      <div className="mx-auto max-w-7xl px-4 pt-20 pb-10 sm:px-8">
-        <div className="grid gap-14 border-b border-oro/15 pb-14 md:grid-cols-12">
+      <div className="mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-8 sm:pt-20">
+        <div className="grid gap-12 border-b border-oro/15 pb-12 sm:gap-14 sm:pb-14 md:grid-cols-12">
           <div className="md:col-span-5">
             <div className="flex items-center gap-5">
-              <Emblema className="size-20 shrink-0 text-oro" />
-              <Image src="/images/logo-daffari-blanco.png" alt="Daffari, hombres de trono" width={290} height={102} className="h-auto w-40" />
+              <Image src="/images/logo-daffari-blanco.png" alt="Daffari, hombres de trono" width={290} height={102} className="h-auto w-44" />
             </div>
-            <p className="mt-8 max-w-sm font-serif text-xl leading-relaxed text-pergamino/80 italic">
+            <p className="mt-7 max-w-sm font-serif text-[1.15rem] leading-relaxed text-pergamino/80 italic sm:mt-8 sm:text-xl">
               «Es importante saber de dónde venimos y quiénes nos han llevado hasta aquí.»
             </p>
             <p className="mt-6 text-sm leading-relaxed">
@@ -49,11 +48,6 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/alta-socio" className="text-oro transition-colors hover:text-oro-claro">
-                  Alta de Socio →
-                </Link>
-              </li>
             </ul>
           </div>
 

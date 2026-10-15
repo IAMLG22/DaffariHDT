@@ -24,15 +24,15 @@ export function BlogTabs({ actual, archivo }: { actual: Entrada[]; archivo: Arch
   return (
     <Tabs value={etapa} onValueChange={(v) => cambiar(v as Etapa)} className="gap-0">
       {/* Conmutador de etapas */}
-      <div className="sticky top-[60px] z-30 border-b border-oro/20 bg-incienso/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-8">
+      <div className="sticky top-[59px] z-30 border-b border-oro/20 bg-incienso/95 backdrop-blur-xl sm:top-[69px]">
+        <div className="mx-auto max-w-7xl px-2 sm:px-8">
           <TabsList
             variant="line"
             className="grid !h-auto w-full grid-cols-2 gap-0 rounded-none bg-transparent p-0 sm:w-auto sm:min-w-[560px]"
           >
             {(
               [
-                { v: "actual", t: "Blog Actual", s: "Nueva etapa", Icon: Feather },
+                { v: "actual", t: "Blog", s: "Nueva etapa", Icon: Feather },
                 { v: "archivo", t: "Archivo Histórico", s: "Blog antiguo", Icon: Archive },
               ] as const
             ).map(({ v, t, s, Icon }) => (
@@ -40,14 +40,14 @@ export function BlogTabs({ actual, archivo }: { actual: Entrada[]; archivo: Arch
                 key={v}
                 value={v}
                 className={cn(
-                  "!h-auto justify-start gap-3 rounded-none border-0 px-4 py-5 text-left text-pergamino/55 sm:px-6",
+                  "!h-auto min-w-0 justify-center gap-3 rounded-none border-0 px-3 py-4 text-center text-pergamino/55 sm:justify-start sm:px-6 sm:py-5 sm:text-left",
                   "after:!bottom-0 after:!h-[2px] after:!bg-oro hover:text-pergamino data-active:!bg-transparent data-active:!text-pergamino",
                 )}
               >
-                <Icon className="size-5 shrink-0 text-oro" />
-                <span className="flex flex-col">
-                  <span className="font-serif text-xl leading-none sm:text-2xl">{t}</span>
-                  <span className="mt-1 text-[0.62rem] font-semibold tracking-[0.22em] text-oro/80 uppercase">{s}</span>
+                <Icon className="size-5 shrink-0 text-oro max-sm:hidden" />
+                <span className="flex min-w-0 flex-col">
+                  <span className="font-serif text-[1.3rem] leading-none whitespace-nowrap sm:text-2xl">{t}</span>
+                  <span className="mt-1.5 font-display text-[0.55rem] font-semibold tracking-[0.2em] text-oro/80 uppercase sm:mt-1 sm:text-[0.62rem] sm:tracking-[0.22em]">{s}</span>
                 </span>
               </TabsTrigger>
             ))}
@@ -69,12 +69,12 @@ export function BlogTabs({ actual, archivo }: { actual: Entrada[]; archivo: Arch
 function BlogActual({ entradas }: { entradas: Entrada[] }) {
   if (entradas.length === 0) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-2xl border border-dashed border-oro/50 px-8 py-16 text-center">
+      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-28">
+        <div className="mx-auto max-w-2xl border border-dashed border-oro/50 px-6 py-12 text-center sm:px-8 sm:py-16">
           <Feather className="mx-auto size-8 text-oro" />
           <p className="eyebrow mt-6">Nueva etapa</p>
-          <h2 className="mt-4 font-serif text-4xl text-incienso">Todavía no hay publicaciones</h2>
-          <p className="mx-auto mt-4 max-w-md leading-relaxed text-muted-foreground">
+          <h2 className="mt-4 font-serif text-[2rem] leading-tight text-incienso text-balance sm:text-4xl">Todavía no hay publicaciones</h2>
+          <p className="mx-auto mt-4 max-w-md text-[0.97rem] leading-relaxed text-muted-foreground sm:text-base">
             Aquí aparecerán los artículos de opinión y las crónicas de la nueva etapa del blog.
             Mientras tanto, puedes consultar el Archivo Histórico.
           </p>
@@ -160,33 +160,47 @@ function ArchivoHistorico({ entradas }: { entradas: ArchivoResumen[] }) {
     )
     .filter((e) => !q || norm(`${e.titulo} ${e.extracto} ${e.etiquetas.join(" ")}`).includes(norm(q)))
 
+  const grupoDe = (e: ArchivoResumen) => (filtro === "paginas" ? "Páginas" : e.fecha.slice(0, 4))
   const visibles = filtradas.slice(0, limite)
-  const porAnio = visibles.reduce<Record<string, ArchivoResumen[]>>((acc, e) => {
-    const k = filtro === "paginas" ? "Páginas" : e.fecha.slice(0, 4)
-    ;(acc[k] ??= []).push(e)
+  // Map y no objeto: un objeto ordena las claves numéricas ("2010"…"2014") de
+  // menor a mayor y los años saldrían al revés que las entradas.
+  const porAnio = new Map<string, ArchivoResumen[]>()
+  for (const e of visibles) {
+    const k = grupoDe(e)
+    porAnio.set(k, [...(porAnio.get(k) ?? []), e])
+  }
+  // Total del año con la búsqueda aplicada, aunque aún no estén todas cargadas.
+  const totalPorGrupo = filtradas.reduce<Record<string, number>>((acc, e) => {
+    acc[grupoDe(e)] = (acc[grupoDe(e)] ?? 0) + 1
     return acc
   }, {})
 
-  const elegir = (f: string | null) => {
+  const filtrosRef = React.useRef<HTMLDivElement>(null)
+  const elegir = (f: string | null, boton?: HTMLElement) => {
     setFiltro(f)
     setLimite(POR_PAGINA)
+    // En móvil la píldora elegida se centra en su carril.
+    boton?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
+    // Si se filtra desde muy abajo, la lista se acorta: volver a los filtros.
+    const barra = filtrosRef.current
+    if (barra && barra.getBoundingClientRect().top < 0) barra.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   return (
     <div className="relative">
       <div className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply grano" aria-hidden="true" />
-      <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-8 sm:py-24">
+      <div className="relative mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-24">
         <header className="border-y-4 border-double border-incienso/70 py-6 text-center">
-          <p className="font-display text-xs tracking-[0.5em] text-tinta uppercase">Hemeroteca · Daffari Hombres de Trono</p>
-          <h2 className="mt-3 font-serif text-5xl text-incienso italic sm:text-6xl">Archivo Histórico</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-tinta/80">
+          <p className="font-display text-[0.6rem] leading-relaxed tracking-[0.32em] text-tinta uppercase sm:text-xs sm:tracking-[0.5em]">Hemeroteca · Daffari Hombres de Trono</p>
+          <h2 className="mt-3 font-serif text-[2.6rem] leading-tight text-incienso italic sm:text-6xl">Archivo Histórico</h2>
+          <p className="mx-auto mt-3 max-w-xl text-[0.85rem] leading-relaxed text-tinta/80 sm:text-sm">
             Todas las entradas del blog antiguo de la asociación ({anios.at(-1)}–{anios[0]}), conservadas con su fecha
             original de publicación.
           </p>
         </header>
 
         {/* Buscador y filtro por año */}
-        <div className="mt-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div ref={filtrosRef} className="mt-8 flex scroll-mt-36 flex-col gap-5 sm:mt-10 lg:flex-row lg:items-center lg:justify-between">
           <label className="relative block lg:w-96">
             <span className="sr-only">Buscar en el archivo</span>
             <Search className="pointer-events-none absolute top-1/2 left-0 size-4 -translate-y-1/2 text-tinta/60" />
@@ -207,23 +221,38 @@ function ArchivoHistorico({ entradas }: { entradas: ArchivoResumen[] }) {
             )}
           </label>
 
-          <div role="group" aria-label="Filtrar por año" className="flex flex-wrap gap-2">
-            {[null, ...anios, ...(hayPaginas ? ["paginas"] : [])].map((a) => (
-              <button
-                key={a ?? "todos"}
-                type="button"
-                aria-pressed={filtro === a}
-                onClick={() => elegir(a)}
-                className={cn(
-                  "border px-4 py-2 font-display text-xs tracking-[0.2em] transition-colors",
-                  filtro === a
-                    ? "border-burdeos bg-burdeos text-pergamino"
-                    : "border-incienso/30 text-tinta hover:border-burdeos hover:text-burdeos",
-                )}
-              >
-                {a === null ? "Todos" : a === "paginas" ? "Páginas" : a}
-              </button>
-            ))}
+          {/* Carril de píldoras: en móvil una sola fila con scroll horizontal que sangra hasta los bordes */}
+          <div className="relative -mx-5 sm:mx-0">
+            <div
+              role="group"
+              aria-label="Filtrar por año"
+              className="scrollbar-none flex snap-x snap-proximity gap-2 overflow-x-auto scroll-smooth px-5 py-1 sm:flex-wrap sm:overflow-visible sm:px-0"
+            >
+              {[null, ...anios, ...(hayPaginas ? ["paginas"] : [])].map((a) => {
+                const activo = filtro === a
+                return (
+                  <button
+                    key={a ?? "todos"}
+                    type="button"
+                    aria-pressed={activo}
+                    onClick={(e) => elegir(a, e.currentTarget)}
+                    className={cn(
+                      "shrink-0 snap-start rounded-full border px-5 py-2.5 font-display text-[0.7rem] leading-none font-semibold tracking-[0.18em] whitespace-nowrap uppercase",
+                      "transition-[background-color,border-color,color,box-shadow] duration-300 [-webkit-tap-highlight-color:transparent] active:scale-[0.97]",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oro",
+                      activo
+                        ? "border-burdeos bg-burdeos text-oro-claro shadow-[0_6px_18px_-10px_rgba(90,24,39,0.8),inset_0_0_0_1px_rgba(197,160,89,0.35)]"
+                        : "border-incienso/15 bg-pergamino/60 text-tinta/80 hover:border-oro/60 hover:text-burdeos",
+                    )}
+                  >
+                    {a === null ? "Todos" : a === "paginas" ? "Páginas" : a}
+                  </button>
+                )
+              })}
+            </div>
+            {/* Desvanecidos laterales que insinúan que el carril continúa */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-[#efe8da] to-transparent sm:hidden" />
+            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#efe8da] to-transparent sm:hidden" />
           </div>
         </div>
 
@@ -236,28 +265,42 @@ function ArchivoHistorico({ entradas }: { entradas: ArchivoResumen[] }) {
             No hay entradas que coincidan con la búsqueda.
           </p>
         ) : (
-          <div className="mt-8 space-y-14">
-            {Object.entries(porAnio).map(([grupo, lista]) => (
-              <section key={grupo} className="grid gap-6 md:grid-cols-[10rem_1fr]">
-                <h3 className="font-display text-5xl leading-none text-burdeos/80 md:sticky md:top-48 md:self-start md:text-6xl">
+          <div className="mt-8 space-y-12 sm:space-y-14">
+            {[...porAnio].map(([grupo, lista]) => (
+              <section key={grupo} className="grid min-w-0 gap-4 sm:gap-6 md:grid-cols-[10rem_minmax(0,1fr)]">
+                {/* Móvil: franja fija bajo las pestañas (59px de menú + 72px de pestañas) que
+                    acompaña todo el año y cede su sitio al siguiente al terminar la sección.
+                    Escritorio: el número grande queda fijo en la columna lateral. */}
+                <h3
+                  className={cn(
+                    "sticky top-[131px] z-20 -mx-5 flex items-center gap-4 self-start px-5 py-2.5",
+                    "border-b border-oro/25 bg-[#efe8da]/90 font-display text-2xl leading-none text-burdeos backdrop-blur-md",
+                    "sm:text-3xl md:top-48 md:mx-0 md:block md:border-0 md:bg-transparent md:p-0 md:text-6xl md:text-burdeos/80 md:backdrop-blur-none",
+                  )}
+                >
                   {grupo}
+                  <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-oro/50 to-transparent md:hidden" />
+                  <span className="font-sans text-[0.62rem] tracking-[0.18em] text-tinta/60 uppercase md:hidden">
+                    {totalPorGrupo[grupo]} {grupo === "Páginas" ? "" : totalPorGrupo[grupo] === 1 ? "entrada" : "entradas"}
+                  </span>
                 </h3>
-                <ol className="divide-y divide-dashed divide-incienso/25 border-y border-incienso/25">
+                <ol className="min-w-0 divide-y divide-dashed divide-incienso/25 border-y border-incienso/25">
                   {lista.map((e) => (
-                    <li key={e.slug} className="group relative grid gap-4 py-6 sm:grid-cols-[1fr_6.5rem] sm:gap-8">
-                      <div className="grid gap-2 sm:grid-cols-[8.5rem_1fr] sm:gap-6">
-                        <div className="text-[0.7rem] tracking-[0.18em] text-tinta/70 uppercase">
+                    <li key={e.slug} className="group relative grid min-w-0 gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_6.5rem] sm:gap-8 sm:py-6">
+                      <div className="grid min-w-0 gap-1.5 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-6">
+                        <div className="text-[0.64rem] tracking-[0.18em] text-tinta/70 uppercase sm:text-[0.7rem]">
                           <time dateTime={e.fecha}>{formatearFecha(e.fecha)}</time>
                           {e.etiquetas[0] && <span className="mt-1 block text-burdeos">{e.etiquetas[0]}</span>}
                         </div>
-                        <div>
-                          <h4 className="font-serif text-2xl leading-snug text-incienso transition-colors group-hover:text-burdeos">
+                        {/* Algunas entradas antiguas traen URLs larguísimas sin espacios: se parten donde haga falta */}
+                        <div className="min-w-0 [overflow-wrap:anywhere]">
+                          <h4 className="font-serif text-[1.4rem] leading-snug text-incienso transition-colors group-hover:text-burdeos sm:text-2xl">
                             <Link href={`/blog/archivo/${e.slug}`} className="after:absolute after:inset-0">
                               {e.titulo}
                             </Link>
                           </h4>
                           {e.extracto && (
-                            <p className="mt-2 line-clamp-2 font-serif text-lg leading-relaxed text-tinta/80 italic">{e.extracto}</p>
+                            <p className="mt-1.5 line-clamp-2 font-serif text-[1.05rem] leading-relaxed text-tinta/80 italic sm:mt-2 sm:text-lg">{e.extracto}</p>
                           )}
                         </div>
                       </div>
@@ -284,7 +327,7 @@ function ArchivoHistorico({ entradas }: { entradas: ArchivoResumen[] }) {
                 <button
                   type="button"
                   onClick={() => setLimite((l) => l + POR_PAGINA)}
-                  className="border border-burdeos px-8 py-3.5 text-xs font-semibold tracking-[0.22em] text-burdeos uppercase transition-colors hover:bg-burdeos hover:text-pergamino"
+                  className="rounded-full border border-burdeos px-8 py-3.5 font-display text-[0.7rem] font-semibold tracking-[0.2em] text-burdeos uppercase transition-colors hover:bg-burdeos hover:text-oro-claro"
                 >
                   Mostrar más ({filtradas.length - limite} restantes)
                 </button>

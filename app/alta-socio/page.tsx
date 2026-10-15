@@ -25,6 +25,7 @@ export default function AltaSocio() {
         title="Alta de Socio"
         intro="Hombres de trono, capataces, mayordomos y simpatizantes: este es vuestro sitio."
         image="/images/historia/capataces.jpg"
+        imageMobile="/images/historia/hombres-de-trono-retrato.jpg"
       />
       <section className="bg-pergamino py-16 sm:py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-8 lg:grid-cols-12 lg:gap-16">

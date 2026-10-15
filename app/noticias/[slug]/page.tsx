@@ -38,7 +38,7 @@ export default async function NoticiaPage({ params }: PageProps<"/noticias/[slug
       {n.imagen && (
         <figure className="mx-auto -mt-px max-w-4xl px-4 sm:px-8">
           <div className="relative overflow-hidden bg-incienso">
-            <Image src={n.imagen} alt="" width={1150} height={720} sizes="(min-width: 896px) 896px, 100vw" className="h-auto max-h-[70svh] w-full object-contain" priority />
+            <Image src={n.imagen} alt="" width={1150} height={720} sizes="(min-width: 896px) 896px, 100vw" className="h-auto max-h-[70svh] w-full object-contain" preload />
           </div>
           {n.creditoImagen && <figcaption className="mt-3 text-xs text-muted-foreground">{n.creditoImagen}</figcaption>}
         </figure>

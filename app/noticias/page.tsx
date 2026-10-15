@@ -18,6 +18,8 @@ export default function Noticias() {
         title="Noticias"
         intro="Comunicados oficiales, mesas redondas, coloquios, actos culturales y la agenda de la asociación."
         image="/images/historia/cuadrilla.jpg"
+        imageMobile="/images/fotos/palio-cuadrilla.jpg"
+        imageClassName="object-[center_75%] sm:object-[center_35%]"
       />
       <section className="bg-pergamino py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-8">

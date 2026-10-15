@@ -17,7 +17,9 @@ export default function Blog() {
         eyebrow="Blog"
         title="Tribuna y Hemeroteca"
         intro="Dos etapas, un mismo varal: la voz de hoy y la memoria escrita de quienes nos precedieron."
-        image="/images/historia/hombres-de-trono-retrato.jpg"
+        image="/images/fotos/tronos-noche.jpg"
+        imageMobile="/images/historia/hombres-de-trono-retrato.jpg"
+        imageClassName="object-[center_20%] sm:object-[center_40%]"
       />
       {/* La pestaña activa se lee de ?etapa= en el cliente; el resto es estático. */}
       <Suspense fallback={<div className="min-h-[60svh] bg-pergamino" />}>

@@ -9,55 +9,90 @@ import { Firma } from "@/components/site/firma"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
+/** Píxeles de scroll en los que el cristal pasa de invisible a opaco. */
+const RECORRIDO = 140
+
 /**
- * Barra fija. Sobre el Hero de portada es transparente; al hacer scroll (o en
- * cualquier otra página) pasa a un cristal oscuro esmerilado con filete dorado.
+ * Barra fija. Sobre el Hero de portada flota sobre la fotografía con un velo
+ * apenas perceptible; al hacer scroll el cristal esmerilado y el filete dorado
+ * aparecen gradualmente, proporcionales al desplazamiento. En el resto de
+ * páginas parte ya opaca.
+ *
+ * Sin `border-b`: un borde transparente sobre un degradado de fondo repite la
+ * primera fila del degradado bajo el borde y dibuja una línea negra nítida.
  */
 export function Navbar() {
   const pathname = usePathname()
-  const [scrolled, setScrolled] = React.useState(false)
+  const portada = pathname === "/"
+  const headerRef = React.useRef<HTMLElement>(null)
+  const [compacta, setCompacta] = React.useState(!portada)
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
+    const header = headerRef.current
+    if (!header) return
+    let raf = 0
+    const sync = () => {
+      raf = 0
+      const p = portada ? Math.min(Math.max(window.scrollY / RECORRIDO, 0), 1) : 1
+      // Variable CSS en vez de estado: el fundido sigue al dedo sin re-renders.
+      header.style.setProperty("--nav-p", p.toFixed(3))
+      setCompacta(p > 0.35)
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(sync)
+    }
+    sync()
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
-
-  const solid = scrolled || pathname !== "/"
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [portada])
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href.split("?")[0])
 
   return (
     <header
+      ref={headerRef}
+      style={{ "--nav-p": portada ? 0 : 1 } as React.CSSProperties}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter,padding] duration-500",
-        solid
-          ? "border-b border-oro/15 bg-incienso/80 py-2.5 backdrop-blur-xl backdrop-saturate-150"
-          : "border-b border-transparent bg-gradient-to-b from-incienso/45 to-transparent py-4",
+        "fixed inset-x-0 top-0 z-50 transition-[padding] duration-500 ease-out",
+        compacta ? "py-2.5 sm:py-3" : "py-4 sm:py-5",
       )}
     >
+      {/* Velo de lectura sobre la foto: largo y muy suave, sin borde inferior visible */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[180%] bg-[linear-gradient(to_bottom,rgba(20,20,19,0.55)_0%,rgba(20,20,19,0.32)_35%,rgba(20,20,19,0.12)_65%,rgba(20,20,19,0)_100%)] transition-opacity duration-300"
+        style={{ opacity: "calc(1 - var(--nav-p))" }}
+      />
+      {/* Cristal incienso esmerilado + filete de oro, que se funden con el scroll */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-incienso/80 backdrop-blur-md backdrop-saturate-150 transition-opacity duration-300"
+        style={{ opacity: "var(--nav-p)" }}
+      >
+        <span className="absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(to_right,transparent,rgba(197,160,89,0.2)_18%,rgba(197,160,89,0.2)_82%,transparent)]" />
+      </div>
       <nav
         aria-label="Principal"
-        className="mx-auto grid max-w-[1216px] grid-cols-[1fr_auto] items-center gap-6 px-4 sm:px-8 lg:grid-cols-[1fr_auto_1fr]"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 sm:px-8"
       >
-        <Link href="/" className="flex shrink-0 items-center gap-3.5 text-pergamino" aria-label="Asociación Daffari, inicio">
-          <Firma className="h-auto w-[108px]" title="" />
-          <span className="h-7 w-px bg-pergamino/35" aria-hidden="true" />
-          <span className="text-[0.62rem] leading-[1.25] font-medium tracking-[0.28em] text-pergamino/80 uppercase">
-            Hombres
-            <br />
-            de trono
+        <Link href="/" className="group flex shrink-0 items-center gap-2.5 sm:gap-4 text-pergamino" aria-label="Asociación Cultural Daffari · Hombres de Trono, inicio">
+          <Firma className="h-auto w-[82px] sm:w-[130px] text-pergamino transition-colors group-hover:text-oro" title="" />
+          <span className="h-5 w-px bg-oro/40 sm:h-7" aria-hidden="true" />
+          <span className="font-display text-[0.68rem] sm:text-[0.95rem] font-semibold tracking-[0.14em] sm:tracking-[0.2em] text-pergamino/90 uppercase transition-colors group-hover:text-oro whitespace-nowrap">
+            Hombres de Trono
           </span>
         </Link>
 
-        <ul className="hidden items-center gap-7 lg:flex">
+        <ul className="hidden items-center gap-6 xl:gap-8 lg:flex">
           {nav.map((item) => {
             const enlace = cn(
-              "relative block py-1.5 text-[0.92rem] transition-colors",
+              "relative block py-1 font-display text-[0.78rem] tracking-[0.16em] uppercase font-medium transition-colors",
               "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-oro after:transition-transform after:duration-500 hover:after:scale-x-100",
-              isActive(item.href) ? "text-pergamino after:scale-x-100" : "text-pergamino/80 hover:text-pergamino",
+              isActive(item.href) ? "text-oro after:scale-x-100" : "text-pergamino/80 hover:text-pergamino",
             )
             return "children" in item ? (
               <li key={item.href} className="group/dd relative">
@@ -87,42 +122,32 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           <a
             href={site.redes.instagram}
             target="_blank"
             rel="noreferrer"
             aria-label="Daffari en Instagram"
-            className="hidden text-pergamino/90 transition-colors hover:text-oro sm:block"
+            className="hidden items-center gap-2 rounded-full border border-oro/30 bg-incienso/40 px-3.5 py-1.5 text-pergamino/90 backdrop-blur-sm transition-all hover:border-oro hover:bg-oro hover:text-incienso sm:flex"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-5" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-4" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="5" />
               <circle cx="12" cy="12" r="4" />
               <circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none" />
             </svg>
+            <span className="font-display text-[0.7rem] tracking-[0.18em] uppercase font-semibold">Instagram</span>
           </a>
-          <Link
-            href="/alta-socio"
-            className={cn(
-              "hidden rounded-full border px-4 py-2 text-[0.82rem] font-medium transition-colors duration-300 sm:inline-block",
-              pathname === "/alta-socio"
-                ? "border-oro bg-oro text-incienso"
-                : "border-oro/70 bg-incienso/20 text-oro backdrop-blur-sm hover:bg-oro hover:text-incienso",
-            )}
-          >
-            Hazte socio
-          </Link>
 
           <Sheet>
             <SheetTrigger
-              className="flex size-11 items-center justify-center border border-oro/30 text-oro lg:hidden"
+              className="flex size-10 items-center justify-center rounded-full border border-oro/30 bg-incienso/30 text-oro backdrop-blur-sm transition-colors active:bg-oro/15 lg:hidden"
               aria-label="Abrir menú"
             >
               <Menu className="size-5" />
             </SheetTrigger>
             <SheetContent side="right" className="border-oro/20 bg-incienso text-pergamino">
               <SheetTitle className="px-6 pt-8 font-display text-sm tracking-[0.3em] text-oro uppercase">
-                Daffari
+                Daffari · Hombres de Trono
               </SheetTitle>
               <ul className="flex flex-col px-6">
                 {nav.map((item) => (
@@ -132,9 +157,12 @@ export function Navbar() {
                         <li key={c.href} className="border-b border-oro/10">
                           <SheetClose nativeButton={false}
                             render={<Link href={c.href} />}
-                            className="block py-4 font-serif text-2xl"
+                            className="block py-3.5"
                           >
-                            {c.label}
+                            <span className="block font-serif text-[1.6rem] leading-tight">{c.label}</span>
+                            <span className="mt-0.5 block font-display text-[0.6rem] tracking-[0.2em] text-oro/70 uppercase">
+                              {c.hint}
+                            </span>
                           </SheetClose>
                         </li>
                       ))
@@ -142,7 +170,7 @@ export function Navbar() {
                       <li className="border-b border-oro/10">
                         <SheetClose nativeButton={false}
                           render={<Link href={item.href} />}
-                          className={cn("block py-4 font-serif text-2xl", isActive(item.href) && "text-oro")}
+                          className={cn("block py-4 font-serif text-[1.6rem] leading-tight", isActive(item.href) && "text-oro")}
                         >
                           {item.label}
                         </SheetClose>
@@ -152,12 +180,19 @@ export function Navbar() {
                 ))}
               </ul>
               <div className="mt-auto p-6">
-                <SheetClose nativeButton={false}
-                  render={<Link href="/alta-socio" />}
-                  className="block bg-oro py-4 text-center text-xs font-semibold tracking-[0.2em] text-incienso uppercase"
+                <a
+                  href={site.redes.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 border border-oro bg-oro/10 py-3.5 text-center font-display text-xs font-semibold tracking-[0.2em] text-oro uppercase transition-colors hover:bg-oro hover:text-incienso"
                 >
-                  Hazte socio
-                </SheetClose>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-4" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none" />
+                  </svg>
+                  Instagram Oficial
+                </a>
               </div>
             </SheetContent>
           </Sheet>
