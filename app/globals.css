@@ -1,0 +1,197 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+@custom-variant tall (@media (min-width: 1024px) and (min-height: 860px));
+
+@theme inline {
+  /* Paleta "Modern Cofrade" */
+  --color-pergamino: #faf8f5;
+  --color-pergamino-2: #f2ede4;
+  --color-incienso: #141413;
+  --color-incienso-2: #1e1d1b;
+  --color-burdeos: #5a1827;
+  --color-burdeos-2: #74203a;
+  --color-nazareno: #2d1a36;
+  --color-oro: #c5a059;
+  --color-oro-claro: #dcc28c;
+  --color-tinta: #3d3a35;
+
+  --font-display: var(--font-cinzel);
+  --font-serif: var(--font-cormorant);
+  --font-heading: var(--font-cormorant);
+  --font-sans: var(--font-jakarta);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-scroll-cue: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  @keyframes scroll-cue {
+    0% { transform: scaleY(0); transform-origin: top; }
+    45% { transform: scaleY(1); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+}
+
+:root {
+  --background: #faf8f5;
+  --foreground: #141413;
+  --card: #ffffff;
+  --card-foreground: #141413;
+  --popover: #faf8f5;
+  --popover-foreground: #141413;
+  --primary: #5a1827;
+  --primary-foreground: #faf8f5;
+  --secondary: #f2ede4;
+  --secondary-foreground: #141413;
+  --muted: #f2ede4;
+  --muted-foreground: #6b655c;
+  --accent: #f2ede4;
+  --accent-foreground: #5a1827;
+  --destructive: #a3252f;
+  --border: #e4dccd;
+  --input: #d8cdb9;
+  --ring: #c5a059;
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-oro);
+    color: var(--color-incienso);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+}
+
+@layer components {
+  /* Rótulo pequeño en versalitas, dorado */
+  .eyebrow {
+    @apply font-sans text-[0.7rem] font-semibold tracking-[0.32em] uppercase text-oro;
+  }
+  /* Filete dorado con rombo central, al modo de las orlas de los carteles */
+  .filete {
+    @apply relative flex items-center gap-3 text-oro;
+  }
+  .filete::before,
+  .filete::after {
+    content: "";
+    @apply h-px flex-1 bg-current opacity-60;
+  }
+  /* Letra capitular */
+  .capitular::first-letter {
+    @apply float-left mt-1 mr-3 font-display text-[4.6rem] leading-[0.8] text-burdeos;
+  }
+  /* Grano fotográfico para las fotos antiguas */
+  .grano {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  /* Foto histórica: sepia apagada que cobra contraste al pasar el ratón */
+  .foto-antigua {
+    @apply transition-[filter,transform] duration-700 ease-out;
+    filter: sepia(0.55) grayscale(0.35) contrast(0.92) brightness(0.96);
+  }
+  .group:hover .foto-antigua,
+  .foto-antigua:hover {
+    filter: sepia(0.15) grayscale(0) contrast(1.08) brightness(1);
+  }
+  /* Revelado al hacer scroll */
+  .reveal {
+    @apply translate-y-6 opacity-0 transition-[opacity,transform] duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)];
+  }
+  .reveal[data-visible="true"] {
+    @apply translate-y-0 opacity-100;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { @apply translate-y-0 opacity-100 transition-none; }
+  }
+  /* Tipografía de lectura larga */
+  .prosa {
+    @apply font-serif text-[1.22rem] leading-[1.75] text-tinta;
+  }
+  .prosa p + p {
+    @apply mt-5;
+  }
+  /* Cuerpo HTML migrado del blog antiguo */
+  .archivo-html {
+    @apply font-serif text-[1.18rem] leading-[1.75] text-tinta break-words;
+  }
+  .archivo-html p,
+  .archivo-html ul,
+  .archivo-html ol,
+  .archivo-html blockquote,
+  .archivo-html table {
+    @apply my-4;
+  }
+  .archivo-html a {
+    @apply text-burdeos underline decoration-oro/60 underline-offset-4 hover:text-oro;
+  }
+  .archivo-html a:has(img) {
+    @apply no-underline;
+  }
+  .archivo-html img {
+    @apply mx-auto my-6 block h-auto max-w-full border border-incienso/10 shadow-[0_10px_30px_-18px_rgba(20,20,19,0.6)];
+  }
+  .archivo-html iframe {
+    @apply my-6 aspect-video h-auto w-full;
+  }
+  .archivo-html h3 {
+    @apply mt-10 mb-3 font-display text-lg tracking-[0.1em] text-burdeos uppercase;
+  }
+  .archivo-html h4 {
+    @apply mt-8 mb-2 text-xl font-semibold text-incienso;
+  }
+  .archivo-html blockquote {
+    @apply border-l-2 border-oro pl-5 italic;
+  }
+  .archivo-html ul {
+    @apply list-disc pl-6;
+  }
+  .archivo-html ol {
+    @apply list-decimal pl-6;
+  }
+  .archivo-html td,
+  .archivo-html th {
+    @apply border border-incienso/15 p-2 align-top text-base;
+  }
+  .prosa h3 {
+    @apply mt-14 mb-5 font-display text-xl tracking-[0.12em] text-burdeos uppercase;
+  }
+}
