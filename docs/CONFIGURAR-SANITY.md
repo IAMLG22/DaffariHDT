@@ -55,9 +55,29 @@ Le llegará un correo de invitación; tiene que aceptarlo y crear su contraseña
 
 A partir de ahí entra en **https://daffari-hdt.vercel.app/admin**. El manual para el admin está en [`docs/ADMIN.md`](ADMIN.md).
 
+## 6. Que la web se actualice al publicar (webhook)
+
+Sin este paso, en Vercel los listados (blog, noticias…) pueden seguir mostrando la versión antigua hasta el siguiente despliegue.
+
+1. **Clave secreta:** está en tu `.env.local` como `SANITY_REVALIDATE_SECRET`. Si no existe, invéntate una larga (30 caracteres o más, sin espacios).
+2. **En Vercel:** *Settings* → *Environment Variables* → añade `SANITY_REVALIDATE_SECRET` con esa clave. Esta sí es secreta, así que márcala como *Sensitive*. Después, **Redeploy**.
+3. **En Sanity:** sanity.io/manage → tu proyecto → **API** → **Webhooks** → **Create webhook**:
+   - **Name:** `Actualizar web`
+   - **URL:** `https://daffari-hdt.vercel.app/api/revalidar`
+   - **Dataset:** `production`
+   - **Trigger on:** marca *Create*, *Update* y *Delete*
+   - **Filter:** `_type in ["entradaBlog", "noticia", "homenajeado", "miembroJunta"]`
+   - **Projection:** `{_type}`
+   - **HTTP method:** `POST`
+   - **Secret:** la misma clave del paso 1
+   - Deja sin marcar *Trigger webhook when drafts are modified*
+4. Guarda. Cuando la web pase al dominio propio, cambia la URL del webhook.
+
+Para comprobarlo, publica un cambio y recarga la página en Vercel. En el webhook, la pestaña *Attempts* debe mostrar respuestas `200`.
+
 ## Cómo funciona por dentro (para programadores)
 
 - El panel es Sanity Studio embebido en la ruta `/admin` (`app/admin/[[...tool]]`, configuración en `sanity.config.ts`).
 - Los tipos de contenido están en `sanity/schemaTypes/`: entrada de blog, noticia, homenajeado y miembro de la Junta.
-- La web lee los datos en `lib/datos.ts` con `cachedSanity` (`sanity/live.ts`). `<SanityLive />` actualiza la caché en cuanto se publica, sin necesidad de *webhooks*.
+- La web lee los datos en `lib/datos.ts` con `cachedSanity` (`sanity/live.ts`). Todas las consultas llevan la etiqueta `sanity-contenido`. El webhook (`app/api/revalidar`) la caduca al publicar, y `<SanityLive />` refresca además las páginas que estén abiertas en ese momento.
 - El Archivo Histórico (blog antiguo) sigue en `lib/archivo-blog.json`: no se edita desde el panel.

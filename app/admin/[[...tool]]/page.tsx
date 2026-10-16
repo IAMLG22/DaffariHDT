@@ -15,7 +15,7 @@ export default function Admin() {
         <h1 className="font-serif text-4xl">Panel de administración</h1>
         <p className="text-muted-foreground">
           El panel aún no está conectado. Falta configurar la variable <code>NEXT_PUBLIC_SANITY_PROJECT_ID</code>{" "}
-          (consulta <code>docs/ADMIN.md</code>).
+          (consulta <code>docs/CONFIGURAR-SANITY.md</code>).
         </p>
       </main>
     )

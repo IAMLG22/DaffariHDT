@@ -23,8 +23,14 @@ export const cachedSanity: StrictDefinedFetchType = async (opciones) => {
   return vivo.sanityFetch(opciones)
 }
 
+/**
+ * Etiqueta común a todas las consultas. El webhook de Sanity (/api/revalidar)
+ * la caduca al publicar, así la web se actualiza aunque nadie la tenga abierta.
+ */
+export const ETIQUETA_SANITY = "sanity-contenido"
+
 /** Atajo: contenido publicado, sin marcas de edición visual. */
 export async function consultar<T>(query: string, params: Record<string, unknown> = {}): Promise<T> {
-  const { data } = await cachedSanity({ query, params, perspective: "published", stega: false })
+  const { data } = await cachedSanity({ query, params, perspective: "published", stega: false, tags: [ETIQUETA_SANITY] })
   return data as T
 }
