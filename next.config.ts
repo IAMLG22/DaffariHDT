@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   allowedDevOrigins: ["192.168.1.47", "192.168.1.47:3000", "localhost:3000"],
+  // Fotos que el admin sube al panel (Sanity)
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+  },
   turbopack: {
     root: __dirname,
   },

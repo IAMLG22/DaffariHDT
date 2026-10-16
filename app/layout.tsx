@@ -1,7 +1,5 @@
 import type { Metadata } from "next"
 import { Cinzel, Cormorant_Garamond, Lora } from "next/font/google"
-import { Navbar } from "@/components/site/navbar"
-import { Footer } from "@/components/site/footer"
 import "./globals.css"
 
 const cinzel = Cinzel({
@@ -36,19 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${cinzel.variable} ${cormorant.variable} ${lora.variable}`}>
-      <body className="flex min-h-svh flex-col">
-        <a
-          href="#contenido"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-oro focus:px-4 focus:py-2 focus:text-incienso"
-        >
-          Saltar al contenido
-        </a>
-        <Navbar />
-        <main id="contenido" className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </body>
+      <body className="flex min-h-svh flex-col">{children}</body>
     </html>
   )
 }

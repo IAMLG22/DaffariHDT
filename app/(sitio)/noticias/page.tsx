@@ -2,15 +2,15 @@ import type { Metadata } from "next"
 import { PageHeader } from "@/components/site/headings"
 import { NoticiaCard } from "@/components/site/noticia-card"
 import { Reveal } from "@/components/site/ui"
-import { noticiasOrdenadas } from "@/lib/content"
+import { getNoticias } from "@/lib/datos"
 
 export const metadata: Metadata = {
   title: "Noticias",
   description: "Actualidad, comunicados oficiales, mesas redondas y actos de la Asociación Daffari.",
 }
 
-export default function Noticias() {
-  const [ultima, ...resto] = noticiasOrdenadas
+export default async function Noticias() {
+  const [ultima, ...resto] = await getNoticias()
   return (
     <>
       <PageHeader
@@ -23,9 +23,16 @@ export default function Noticias() {
       />
       <section className="bg-pergamino py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-8">
-          <Reveal>
-            <NoticiaCard noticia={ultima} destacada />
-          </Reveal>
+          {!ultima && (
+            <p className="py-16 text-center font-serif text-2xl text-muted-foreground italic">Todavía no hay noticias publicadas.</p>
+          )}
+          {ultima && (
+            <Reveal>
+              <NoticiaCard noticia={ultima} destacada />
+            </Reveal>
+          )}
+          {resto.length > 0 && (
+          <>
           <div className="mt-16 mb-10 flex items-center gap-4 text-oro" aria-hidden="true">
             <span className="font-display text-xs tracking-[0.4em]">Más noticias</span>
             <span className="h-px flex-1 bg-current opacity-40" />
@@ -37,6 +44,8 @@ export default function Noticias() {
               </Reveal>
             ))}
           </div>
+          </>
+          )}
         </div>
       </section>
     </>

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { PageHeader } from "@/components/site/headings"
 import { BlogTabs } from "./blog-tabs"
-import { blogActual } from "@/lib/content"
+import { getEntradas } from "@/lib/datos"
 import { archivoResumen } from "@/lib/archivo"
 
 export const metadata: Metadata = {
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   description: "Opinión, artículos y crónicas de la nueva etapa, y el archivo histórico del blog de la Asociación Daffari.",
 }
 
-export default function Blog() {
+export default async function Blog() {
+  const blogActual = await getEntradas()
   return (
     <>
       <PageHeader

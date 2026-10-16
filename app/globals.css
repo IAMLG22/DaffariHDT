@@ -124,7 +124,8 @@
     @apply h-px flex-1 bg-current opacity-60;
   }
   /* Letra capitular */
-  .capitular::first-letter {
+  .capitular::first-letter,
+  .capitular-primera > p:first-of-type::first-letter {
     @apply float-left mt-1 mr-2.5 font-display text-[3.7rem] leading-[0.8] text-burdeos sm:mr-3 sm:text-[4.6rem];
   }
   /* Grano fotográfico para las fotos antiguas */

@@ -9,7 +9,16 @@ import type { Homenajeado } from "@/lib/capataces"
 const anioTexto = (h: Homenajeado) => (h.anio ? String(h.anio) : "S. f.")
 
 /** Un bloque por homenajeado; al pulsarlo se abre su homenaje. */
-export function Cuadricula({ homenajeados, estatuilla }: { homenajeados: Homenajeado[]; estatuilla: string }) {
+export function Cuadricula({
+  homenajeados,
+  estatuilla,
+  textos,
+}: {
+  homenajeados: Homenajeado[]
+  estatuilla: string
+  /** Texto de cada homenaje, ya preparado en el servidor (por slug). */
+  textos: Record<string, React.ReactNode>
+}) {
   return (
     <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
       {homenajeados.map((h) => {
@@ -48,7 +57,7 @@ export function Cuadricula({ homenajeados, estatuilla }: { homenajeados: Homenaj
                 showCloseButton={false}
                 className="max-h-[92svh] w-full gap-0 overflow-y-auto rounded-none border border-oro/30 bg-pergamino p-0 ring-0 sm:max-w-4xl"
               >
-                <Homenaje h={h} />
+                <Homenaje h={h} texto={textos[h.slug]} />
               </DialogContent>
             </Dialog>
           </li>
@@ -58,7 +67,7 @@ export function Cuadricula({ homenajeados, estatuilla }: { homenajeados: Homenaj
   )
 }
 
-function Homenaje({ h }: { h: Homenajeado }) {
+function Homenaje({ h, texto }: { h: Homenajeado; texto: React.ReactNode }) {
   return (
     <article>
       <header className="relative bg-incienso px-6 pt-8 pb-7 text-pergamino sm:px-10 sm:pt-10">
@@ -78,9 +87,7 @@ function Homenaje({ h }: { h: Homenajeado }) {
       <div className="grid gap-8 px-6 py-8 sm:px-10 sm:py-10 md:grid-cols-12">
         <div className={h.imagen?.vertical ? "md:col-span-7" : "md:col-span-12"}>
           <div className="space-y-4 font-serif text-[1.12rem] leading-[1.75] text-tinta">
-            {h.parrafos.map((p) => (
-              <p key={p.slice(0, 24)}>{p}</p>
-            ))}
+            {texto}
           </div>
 
           {h.cita && (

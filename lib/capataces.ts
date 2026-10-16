@@ -6,6 +6,8 @@
  * PENDIENTE: ediciones 2015–2025 y año del homenaje a Fernando Baena Reina.
  */
 
+import type { PortableTextBlock } from "next-sanity"
+
 export type Fuente = { texto: string; href: string }
 
 export type Homenajeado = {
@@ -16,6 +18,8 @@ export type Homenajeado = {
   /** Una línea bajo el nombre. */
   lema: string
   parrafos: string[]
+  /** Texto con formato cuando viene del panel (Sanity). */
+  texto?: PortableTextBlock[]
   cita?: { texto: string; autor: string }
   imagen?: { src: string; alt: string; pie?: string; vertical?: boolean }
   /** Foto del bloque en la cuadrícula; si falta se usa la estatuilla. */

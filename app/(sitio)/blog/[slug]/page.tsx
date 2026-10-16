@@ -3,9 +3,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
-import { blogActual, formatearFecha } from "@/lib/content"
+import { formatearFecha } from "@/lib/content"
+import { getEntrada, getEntradas } from "@/lib/datos"
+import { Cuerpo } from "@/components/site/texto-rico"
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const blogActual = await getEntradas()
   // Cache Components exige al menos un parámetro: mientras el blog esté vacío,
   // se genera uno de reserva que responde con 404.
   return blogActual.length ? blogActual.map((e) => ({ slug: e.slug })) : [{ slug: "proximamente" }]
@@ -13,13 +16,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const { slug } = await params
-  const e = blogActual.find((x) => x.slug === slug)
+  const e = await getEntrada(slug)
   return e ? { title: e.titulo, description: e.extracto } : {}
 }
 
 export default async function EntradaPage({ params }: PageProps<"/blog/[slug]">) {
   const { slug } = await params
-  const e = blogActual.find((x) => x.slug === slug)
+  const e = await getEntrada(slug)
   if (!e) notFound()
 
   return (
@@ -43,11 +46,7 @@ export default async function EntradaPage({ params }: PageProps<"/blog/[slug]">)
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-8 sm:py-20">
         <p className="font-serif text-2xl leading-relaxed text-incienso italic">{e.extracto}</p>
         <div className="prosa mt-10">
-          {e.cuerpo.map((p, i) => (
-            <p key={i} className={i === 0 ? "capitular" : undefined}>
-              {p}
-            </p>
-          ))}
+          <Cuerpo rico={e.cuerpoRico} parrafos={e.cuerpo} capitular />
         </div>
       </div>
     </article>

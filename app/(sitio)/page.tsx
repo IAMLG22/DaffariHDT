@@ -6,9 +6,11 @@ import { Reveal } from "@/components/site/ui"
 import { SectionHeading } from "@/components/site/headings"
 import { NoticiaCard } from "@/components/site/noticia-card"
 import { FotoAdaptable } from "@/components/site/foto-adaptable"
-import { asociacion, junta, noticiasOrdenadas, instagramPosts, site } from "@/lib/content"
+import { asociacion, instagramPosts, site } from "@/lib/content"
+import { getJunta, getNoticias } from "@/lib/datos"
 
-export default function Inicio() {
+export default async function Inicio() {
+  const [junta, noticiasOrdenadas] = await Promise.all([getJunta(), getNoticias()])
   return (
     <>
       <Hero />
@@ -117,8 +119,8 @@ export default function Inicio() {
                 </p>
                 {c.destacado && (
                   <p className="mt-6 hidden text-sm leading-relaxed text-pergamino/60 lg:block">
-                    Elegido en asamblea general extraordinaria el 6 de diciembre de 2022, abre una nueva etapa de
-                    renovación de la asociación.
+                    {c.nota ??
+                      "Elegido en asamblea general extraordinaria el 6 de diciembre de 2022, abre una nueva etapa de renovación de la asociación."}
                   </p>
                 )}
               </Reveal>

@@ -3,21 +3,25 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
-import { formatearFecha, noticias } from "@/lib/content"
+import { formatearFecha } from "@/lib/content"
+import { getNoticia, getNoticias } from "@/lib/datos"
+import { Cuerpo } from "@/components/site/texto-rico"
 
-export function generateStaticParams() {
-  return noticias.map((n) => ({ slug: n.slug }))
+export async function generateStaticParams() {
+  const lista = await getNoticias()
+  // Cache Components exige al menos un parámetro: si no hay noticias, uno de reserva (404).
+  return lista.length ? lista.map((n) => ({ slug: n.slug })) : [{ slug: "sin-noticias" }]
 }
 
 export async function generateMetadata({ params }: PageProps<"/noticias/[slug]">): Promise<Metadata> {
   const { slug } = await params
-  const n = noticias.find((x) => x.slug === slug)
+  const n = await getNoticia(slug)
   return n ? { title: n.titular, description: n.extracto } : {}
 }
 
 export default async function NoticiaPage({ params }: PageProps<"/noticias/[slug]">) {
   const { slug } = await params
-  const n = noticias.find((x) => x.slug === slug)
+  const n = await getNoticia(slug)
   if (!n) notFound()
 
   return (
@@ -46,11 +50,7 @@ export default async function NoticiaPage({ params }: PageProps<"/noticias/[slug
 
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-8 sm:py-20">
         <div className="prosa">
-          {n.cuerpo.map((p, i) => (
-            <p key={i} className={i === 0 ? "capitular" : undefined}>
-              {p}
-            </p>
-          ))}
+          <Cuerpo rico={n.cuerpoRico} parrafos={n.cuerpo} capitular />
         </div>
         <div className="mt-16 border-t border-border pt-8">
           <Link href="/noticias" className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-burdeos uppercase hover:text-oro">

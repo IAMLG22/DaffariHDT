@@ -90,7 +90,12 @@ export const asociacion = {
 }
 
 // ---------------------------------------------------------------- Junta
-export const junta = {
+export type Junta = {
+  cargos: { cargo: string; nombre: string; destacado?: boolean; nota?: string }[]
+  consejeros: string[]
+}
+
+export const junta: Junta = {
   cargos: [
     { cargo: "Presidente", nombre: "José Antonio Luque Fernández", destacado: true },
     { cargo: "Vicepresidente", nombre: "Carlos García Torres" },
@@ -156,6 +161,8 @@ export const instagramPosts: { id: string; imagen: string; pie: string; fecha: s
 ]
 
 // ---------------------------------------------------------------- Noticias
+import type { PortableTextBlock } from "next-sanity"
+
 export type Noticia = {
   slug: string
   categoria: "Comunicado oficial" | "Mesa redonda" | "Actos culturales" | "Agenda anual"
@@ -166,6 +173,8 @@ export type Noticia = {
   imagen?: string
   creditoImagen?: string
   cuerpo: string[]
+  /** Texto con formato cuando la noticia viene del panel (Sanity). */
+  cuerpoRico?: PortableTextBlock[]
 }
 
 export const noticias: Noticia[] = [
@@ -247,13 +256,15 @@ export const noticias: Noticia[] = [
   },
 ]
 
-export const noticiasOrdenadas = [...noticias].sort((a, b) => {
+export const ordenarNoticias = (lista: Noticia[]) => [...lista].sort((a, b) => {
   // Las noticias con fecha real van primero; la agenda anual al final.
   const agendaA = a.fechaTexto ? 1 : 0
   const agendaB = b.fechaTexto ? 1 : 0
   if (agendaA !== agendaB) return agendaA - agendaB
   return b.fecha.localeCompare(a.fecha)
 })
+
+export const noticiasOrdenadas = ordenarNoticias(noticias)
 
 // ---------------------------------------------------------------- Blog
 export type Entrada = {
@@ -265,6 +276,8 @@ export type Entrada = {
   extracto: string
   imagen?: string
   cuerpo: string[]
+  /** Texto con formato cuando la entrada viene del panel (Sanity). */
+  cuerpoRico?: PortableTextBlock[]
   lectura?: number
 }
 
